@@ -36,6 +36,7 @@ public class CategoryController : Controller
         {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Category created successfully";
             return RedirectToAction("Index");
         }
         return View();
@@ -70,6 +71,7 @@ public class CategoryController : Controller
         {
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Category updated successfully";
             return RedirectToAction("Index");
         }
         return View();
@@ -102,6 +104,7 @@ public class CategoryController : Controller
         }
         _context.Categories.Remove(category);
         await _context.SaveChangesAsync();
+        TempData["Success"] = "Category deleted successfully";
         return RedirectToAction("Index");
         
     }
