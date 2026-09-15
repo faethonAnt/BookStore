@@ -41,4 +41,68 @@ public class CategoryController : Controller
         return View();
         
     }
+
+    [HttpGet]
+    public IActionResult Update(int? id)
+    {
+        if (id == null || id == 0)
+        {
+            return NotFound();
+        }
+        var category = _context.Categories.Find(id);
+        if (category == null)
+        {
+            return NotFound();
+        }
+        return View(category);
+    }
+
+    [HttpPost]
+    [ActionName("Update")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdatePOST(Category category)
+    {
+        if (!String.IsNullOrEmpty(category.Name) && _context.Categories.Any(c => c.Name.ToLower() == category.Name.ToLower() && c.Id != category.Id))
+        {
+            ModelState.AddModelError("", "Category already exists");
+        }
+        if (ModelState.IsValid)
+        {
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Delete(int? id)
+    {
+        if (id == null || id == 0)
+        {
+            return NotFound();
+        }
+        var category = _context.Categories.Find(id);
+        if (category == null)
+        {
+            return NotFound();
+        }
+        return View(category);
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePOST(int id)
+    {
+        var category = _context.Categories.Find(id);
+        if (category == null)
+        {
+            return NotFound();
+        }
+        _context.Categories.Remove(category);
+        await _context.SaveChangesAsync();
+        return RedirectToAction("Index");
+        
+    }
 }
