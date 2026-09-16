@@ -1,19 +1,20 @@
+using BulkyBook.Business.IServices;
 using BulkyBookWeb.Data;
-using BulkyBookWeb.Models;
+using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBookWeb.Controllers;
 
 public class CategoryController : Controller
 {
-    private readonly ApplicationDbContext _context;
-    public CategoryController(ApplicationDbContext context)
+    private readonly ICategoryService _categoryService;
+    public CategoryController(ICategoryService categoryService)
     {
-        _context = context;
+        _categoryService = categoryService;
     }
     public IActionResult Index()
     {
-        var categories = _context.Categories.ToList(); // EF alternative to SELECT
+        var categories = _categoryService.GetAllCategoriesAsync();// EF alternative to SELECT
         return View("Index", categories);
     }
     
@@ -28,14 +29,14 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken] // only accepts forms secret code
     public async Task<IActionResult> CreatePOST(Category category)
     {
-        if (!String.IsNullOrEmpty(category.Name) && _context.Categories.Any(c => c.Name.ToLower() == category.Name.ToLower()))
+        if (!String.IsNullOrEmpty(category.Name) &&
+            await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
         {
             ModelState.AddModelError("", "Category already exists");
         }
         if (ModelState.IsValid)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            _categoryService.CreateCategoryAsync(category);
             TempData["Success"] = "Category created successfully";
             return RedirectToAction("Index");
         }
@@ -50,7 +51,7 @@ public class CategoryController : Controller
         {
             return NotFound();
         }
-        var category = _context.Categories.Find(id);
+        var category = _categoryService.GetCategoryByIdAsync(id.Value).Result;
         if (category == null)
         {
             return NotFound();
@@ -63,14 +64,14 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdatePOST(Category category)
     {
-        if (!String.IsNullOrEmpty(category.Name) && _context.Categories.Any(c => c.Name.ToLower() == category.Name.ToLower() && c.Id != category.Id))
+        if (!String.IsNullOrEmpty(category.Name) && 
+             await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
         {
             ModelState.AddModelError("", "Category already exists");
         }
         if (ModelState.IsValid)
         {
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+            _categoryService.UpdateCategoryAsync(category);
             TempData["Success"] = "Category updated successfully";
             return RedirectToAction("Index");
         }
@@ -84,7 +85,7 @@ public class CategoryController : Controller
         {
             return NotFound();
         }
-        var category = _context.Categories.Find(id);
+        var category = _categoryService.GetCategoryByIdAsync(id.Value).Result;
         if (category == null)
         {
             return NotFound();
@@ -97,13 +98,7 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeletePOST(int id)
     {
-        var category = _context.Categories.Find(id);
-        if (category == null)
-        {
-            return NotFound();
-        }
-        _context.Categories.Remove(category);
-        await _context.SaveChangesAsync();
+        _categoryService.DeleteCategoryAsync(id);
         TempData["Success"] = "Category deleted successfully";
         return RedirectToAction("Index");
         
