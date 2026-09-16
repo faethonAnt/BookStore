@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBookWeb.Controllers;
 
+[Area("Customer")]
 public class CategoryController : Controller
 {
     private readonly ICategoryService _categoryService;
