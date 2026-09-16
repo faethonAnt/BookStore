@@ -46,15 +46,15 @@ public class CategoryService : ICategoryService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> IsCategoryNameUniqueAsync(string Name, int? categoryId = null)
+    public async Task<bool> IsCategoryNameUniqueAsync(string name, int? categoryId = null)
     {
         if (categoryId.HasValue)
         {
-            return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == Name.ToLower() && c.Id != categoryId.Value);
+            return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower() && c.Id != categoryId.Value);
         }
         else
         {
-            return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == Name.ToLower());
+            return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower());
         }
         
     }

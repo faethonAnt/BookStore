@@ -12,9 +12,9 @@ public class CategoryController : Controller
     {
         _categoryService = categoryService;
     }
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var categories = _categoryService.GetAllCategoriesAsync();// EF alternative to SELECT
+        var categories = await _categoryService.GetAllCategoriesAsync();// EF alternative to SELECT
         return View("Index", categories);
     }
     
@@ -30,13 +30,13 @@ public class CategoryController : Controller
     public async Task<IActionResult> CreatePOST(Category category)
     {
         if (!String.IsNullOrEmpty(category.Name) &&
-            await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
+            !await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
         {
             ModelState.AddModelError("", "Category already exists");
         }
         if (ModelState.IsValid)
         {
-            _categoryService.CreateCategoryAsync(category);
+            await _categoryService.CreateCategoryAsync(category);
             TempData["Success"] = "Category created successfully";
             return RedirectToAction("Index");
         }
@@ -65,13 +65,13 @@ public class CategoryController : Controller
     public async Task<IActionResult> UpdatePOST(Category category)
     {
         if (!String.IsNullOrEmpty(category.Name) && 
-             await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
+             !await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
         {
             ModelState.AddModelError("", "Category already exists");
         }
         if (ModelState.IsValid)
         {
-            _categoryService.UpdateCategoryAsync(category);
+            await _categoryService.UpdateCategoryAsync(category);
             TempData["Success"] = "Category updated successfully";
             return RedirectToAction("Index");
         }
@@ -98,7 +98,7 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeletePOST(int id)
     {
-        _categoryService.DeleteCategoryAsync(id);
+        await _categoryService.DeleteCategoryAsync(id);
         TempData["Success"] = "Category deleted successfully";
         return RedirectToAction("Index");
         
