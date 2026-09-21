@@ -3,6 +3,7 @@ using BulkyBookWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulkyBookWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260921070025_ProductModelTable")]
+    partial class ProductModelTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,9 +77,6 @@ namespace BulkyBookWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -106,61 +106,7 @@ namespace BulkyBookWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Author = "Author 1",
-                            CategoryId = 1,
-                            Description = "Product 1",
-                            ISBN = "ISBN 1",
-                            ListPrice = 50.0,
-                            Price = 45.0,
-                            Price100 = 35.0,
-                            Price50 = 40.0,
-                            Title = "Product 1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Author = "Author 2",
-                            CategoryId = 2,
-                            Description = "Product 2",
-                            ISBN = "ISBN 2",
-                            ListPrice = 50.0,
-                            Price = 45.0,
-                            Price100 = 35.0,
-                            Price50 = 40.0,
-                            Title = "Product 2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Author = "Author 3",
-                            CategoryId = 3,
-                            Description = "Product 3",
-                            ISBN = "ISBN 3",
-                            ListPrice = 50.0,
-                            Price = 45.0,
-                            Price100 = 35.0,
-                            Price50 = 40.0,
-                            Title = "Product 3"
-                        });
-                });
-
-            modelBuilder.Entity("BulkyBook.Models.Product", b =>
-                {
-                    b.HasOne("BulkyBook.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }
