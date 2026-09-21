@@ -1,5 +1,5 @@
 @using BulkyBook.Models
-@model List<Category>
+@model List<Product>
 <div class="container-fluid py-4">
     <div class="card border shadow-sm overflow-hidden">
         <div class="card-header text-white py-3 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(to right,#065f46,#282828,#191414)">
@@ -7,16 +7,15 @@
                 <h5 class="mb-0 fw-bold"><i class="bi bi-grid me-2"></i>Categories</h5>
                 <p class="mb-0 small" style="color: #1DB954;">Manage your product categories</p>
             </div>
-            <a asp-controller="Category" asp-action="Create" class="btn btn-sm btn-outline-light fw-semibold d-inline-flex align-items-center gap-1">
-                <i class="bi bi-plus-lg"></i> New Category
+            <a asp-controller="Product" asp-action="Create" class="btn btn-sm btn-outline-light fw-semibold d-inline-flex align-items-center gap-1">
+                <i class="bi bi-plus-lg"></i> New Product
             </a>
         </div>
-        <div class="table-responsive">
-            <table id="tblData" class="table-styled">
+        <div class="table-styled">
+            <table id="tblData">
                 <thead>
                 <tr>
-                    <th>Category Name</th>
-                    <th>Display Order</th>
+                    <th>Product Title</th>
                     <th class="text-end">Actions</th>
                 </tr>
                 </thead>
@@ -27,5 +26,5 @@
 
 @section Scripts
 {
-    <script src="~/js/categories.js" asp-append-version="true"></script>
+    <script src="~/js/products.js" asp-append-version="true"></script>
 }
