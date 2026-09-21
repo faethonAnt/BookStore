@@ -18,6 +18,7 @@ public class CategoryController : Controller
         var categories = await _categoryService.GetAllCategoriesAsync();// EF alternative to SELECT
         return View("Index", categories);
     }
+
     
     [HttpGet]
     public IActionResult Create()
@@ -104,4 +105,15 @@ public class CategoryController : Controller
         return RedirectToAction("Index");
         
     }
+
+    #region API CALLS
+
+    //json 
+    public async Task<IActionResult> GetAll()
+    {
+        var categories = await _categoryService.GetAllCategoriesAsync();// EF alternative to SELECT
+        return Json(new {data = categories});
+    }
+
+    #endregion
 }
