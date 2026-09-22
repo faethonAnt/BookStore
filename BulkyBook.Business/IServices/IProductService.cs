@@ -6,7 +6,7 @@ public interface IProductService
 {
     Task<Product?> GetProductByIdAsync(int id);
     
-    Task<IEnumerable<Product>> GetAllProductsAsync();
+    Task<IEnumerable<Product>> GetAllProductsAsync(bool includeCategory=false);
     
     Task<Product> CreateProductAsync(Product Product);
     Task UpdateProductAsync(Product Product);

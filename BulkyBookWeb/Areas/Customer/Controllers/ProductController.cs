@@ -15,8 +15,7 @@ public class ProductController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        var products = await _productService.GetAllProductsAsync();// EF alternative to SELECT
-        return View("Index", products);
+        return View();
     }
     
     [HttpGet]
@@ -100,7 +99,7 @@ public class ProductController : Controller
     //json 
     public async Task<IActionResult> GetAll()
     {
-        var products = await _productService.GetAllProductsAsync();// EF alternative to SELECT
+        var products = await _productService.GetAllProductsAsync(true);// EF alternative to SELECT
         return Json(new {data = products});
     }
 
