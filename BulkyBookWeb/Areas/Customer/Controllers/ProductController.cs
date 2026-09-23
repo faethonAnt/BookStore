@@ -19,7 +19,7 @@ public class ProductController : Controller
     }
     
     [HttpGet]
-    public IActionResult Create()
+    public IActionResult Upsert()
     {
         return View();
     }
@@ -27,7 +27,7 @@ public class ProductController : Controller
     [HttpPost]
     [ActionName("Create")]
     [ValidateAntiForgeryToken] // only accepts forms secret code
-    public async Task<IActionResult> CreatePOST(Product product)
+    public async Task<IActionResult> Upsert(Product product)
     {
         if (ModelState.IsValid)
         {
@@ -39,34 +39,7 @@ public class ProductController : Controller
         
     }
 
-    [HttpGet]
-    public IActionResult Update(int? id)
-    {
-        if (id == null || id == 0)
-        {
-            return NotFound();
-        }
-        var product = _productService.GetProductByIdAsync(id.Value).Result;
-        if (product == null)
-        {
-            return NotFound();
-        }
-        return View(product);
-    }
-
-    [HttpPost]
-    [ActionName("Update")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdatePOST(Product product)
-    {
-        if (ModelState.IsValid)
-        {
-            await _productService.UpdateProductAsync(product);
-            TempData["Success"] = "Product updated successfully";
-            return RedirectToAction("Index");
-        }
-        return View();
-    }
+    
 
     [HttpGet]
     public IActionResult Delete(int? id)
