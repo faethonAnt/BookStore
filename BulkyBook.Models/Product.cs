@@ -38,6 +38,7 @@ public class Product
     [Range(0, 1000, ErrorMessage = "Please enter a value between 1 and 1000")]
     public double Price100 { get; set; }
     
+    [Display(Name = "Category")]
     public int CategoryId { get; set; }
     [ForeignKey("CategoryId")]
     public Category Category { get; set; }

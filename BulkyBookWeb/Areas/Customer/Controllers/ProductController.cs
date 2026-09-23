@@ -1,7 +1,9 @@
 using BulkyBook.Business.IServices;
 using BulkyBookWeb.Data;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBookWeb.Controllers;
 
@@ -9,9 +11,12 @@ namespace BulkyBookWeb.Controllers;
 public class ProductController : Controller
 {
     private readonly IProductService _productService;
-    public ProductController(IProductService productService)
+    private readonly ICategoryService _categoryService;
+    public ProductController(IProductService productService, ICategoryService categoryService)
     {
         _productService = productService;
+        _categoryService = categoryService;
+        
     }
     public async Task<IActionResult> Index()
     {
@@ -19,9 +24,19 @@ public class ProductController : Controller
     }
     
     [HttpGet]
-    public IActionResult Upsert()
+    public async Task<IActionResult> Upsert()
     {
-        return View();
+        var categories = await _categoryService.GetAllCategoriesAsync();
+        ProductVM productVM = new()
+        {
+            CategoryList = categories.Select(c=> new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString()
+            }),
+            Product = new Product()
+        };
+        return View(productVM);
     }
 
     [HttpPost]
