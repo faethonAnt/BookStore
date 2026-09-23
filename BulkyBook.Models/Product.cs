@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace BulkyBook.Models;
 
@@ -40,6 +41,7 @@ public class Product
     
     [Display(Name = "Category")]
     public int CategoryId { get; set; }
+    [ValidateNever]
     [ForeignKey("CategoryId")]
     public Category Category { get; set; }
     

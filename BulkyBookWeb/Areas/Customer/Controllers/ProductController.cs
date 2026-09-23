@@ -12,10 +12,13 @@ public class ProductController : Controller
 {
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
-    public ProductController(IProductService productService, ICategoryService categoryService)
+    private readonly IWebHostEnvironment _webHostEnvironment;
+
+    public ProductController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment webHostEnvironment)
     {
         _productService = productService;
         _categoryService = categoryService;
+        _webHostEnvironment = webHostEnvironment;
         
     }
     public async Task<IActionResult> Index()
@@ -40,17 +43,46 @@ public class ProductController : Controller
     }
 
     [HttpPost]
-    [ActionName("Create")]
+    [ActionName("Upsert")]
     [ValidateAntiForgeryToken] // only accepts forms secret code
-    public async Task<IActionResult> Upsert(Product product)
+    public async Task<IActionResult> UpsertPOST(ProductVM productVM, IFormFile? file)
     {
         if (ModelState.IsValid)
         {
-            await _productService.CreateProductAsync(product);
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file != null)
+            {
+                string fileName =Guid.NewGuid().ToString()+Path.GetExtension(file.FileName);
+                string productPath = Path.Combine("images", "products");
+                string finalPath = Path.Combine(wwwRootPath, productPath);
+
+                if (!Directory.Exists(finalPath))
+                {
+                    Directory.CreateDirectory(finalPath);
+                }
+                
+                //save new image
+                using (var fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                productVM.Product.ImageUrl = Path.Combine(@"\",productPath, fileName).Replace("\\","/");
+            }
+            
+            await _productService.CreateProductAsync(productVM.Product);
             TempData["Success"] = "Product created successfully";
             return RedirectToAction("Index");
         }
-        return View();
+        else
+        {
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            productVM.CategoryList = categories.Select(c=> new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.Id.ToString()
+            });
+            return View(productVM);
+        }
         
     }
 
