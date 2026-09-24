@@ -78,8 +78,16 @@ public class ProductController : Controller
                 }
                 productVM.Product.ImageUrl = $"/images/products/{fileName}";
             }
+            if (productVM.Product.Id == null || productVM.Product.Id == 0)
+            {
+                await _productService.CreateProductAsync(productVM.Product);
+                return View(productVM);
+            }
+            else
+            {
+                await _productService.UpdateProductAsync(productVM.Product);
+            }
             
-            await _productService.CreateProductAsync(productVM.Product);
             TempData["Success"] = "Product created successfully";
             return RedirectToAction("Index");
         }
