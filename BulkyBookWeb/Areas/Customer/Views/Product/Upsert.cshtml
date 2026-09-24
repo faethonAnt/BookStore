@@ -22,22 +22,23 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <label asp-for="Product.Title" class="form-label fw-semibold small"></label>
-                                <input type="text" name="Product.Title" asp-for="Product.Title" class="form-control" placeholder="Enter product Title"/>
+                                <input type="text" asp-for="Product.Title" class="form-control" placeholder="Enter product Title"/>
                                 <span asp-validation-for="Product.Title" class="text-danger small"></span>
                             </div>
                             <div class="col-12">
                                 <label asp-for="Product.Description" class="form-label fw-semibold small"></label>
-                                <input type="text" name="Product.Description" asp-for="Product.Title"class="form-control" placeholder="Enter Title"/>
+                                <textarea asp-for="Product.Description" hidden class="form-control" placeholder="Enter Description"></textarea>
+                                <div id="quill-editor" style="height: 200px;"></div>
                                 <span asp-validation-for="Product.Description" class="text-danger small"></span>
                             </div>
                             <div class="col-6">
                                 <label asp-for="Product.ISBN" class="form-label fw-semibold small"></label>
-                                <input type="text" name="Product.ISBN" asp-for="Product.Title" class="form-control" placeholder="Enter ISBN"/>
+                                <input type="text" asp-for="Product.ISBN" class="form-control" placeholder="Enter ISBN"/>
                                 <span asp-validation-for="Product.ISBN" class="text-danger small"></span>
                             </div>
                             <div class="col-6">
                                 <label asp-for="Product.Author" class="form-label fw-semibold small"></label>
-                                <input type="text" name="Product.Author" asp-for="Product.Title" class="form-control" placeholder="Enter Author"/>
+                                <input type="text" asp-for="Product.Author" class="form-control" placeholder="Enter Author"/>
                                 <span asp-validation-for="Product.Author" class="text-danger small"></span>
                             </div>
                         </div>
@@ -46,22 +47,22 @@
                             <div class="row g-3">
                                 <div class="col-6 col-md-3">
                                     <label asp-for="Product.ListPrice" class="form-label fw-semibold small"></label>
-                                    <input type="text" name="Product.ListPrice" asp-for="Product.Title" class="form-control"/>
+                                    <input type="text" asp-for="Product.ListPrice" class="form-control"/>
                                     <span asp-validation-for="Product.ListPrice" class="text-danger small"></span>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <label asp-for="Product.Price" class="form-label fw-semibold small"></label>
-                                    <input type="text" name="Product.Price" asp-for="Product.Title" class="form-control"/>
+                                    <input type="text" asp-for="Product.Price" class="form-control"/>
                                     <span asp-validation-for="Product.Price" class="text-danger small"></span>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <label asp-for="Product.Price50" class="form-label fw-semibold small"></label>
-                                    <input type="text" name="Product.Price50" asp-for="Product.Title" class="form-control"/>
+                                    <input type="text" asp-for="Product.Price50" class="form-control"/>
                                     <span asp-validation-for="Product.Price50" class="text-danger small"></span>
                                 </div>
                                 <div class="col-6 col-md-3">
                                     <label asp-for="Product.Price100" class="form-label fw-semibold small"></label>
-                                    <input type="text" name="Product.Price100" asp-for="Product.Title" class="form-control"/>
+                                    <input type="text" asp-for="Product.Price100" class="form-control"/>
                                     <span asp-validation-for="Product.Price100" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -115,4 +116,21 @@
 @section Scripts
 {
     <partial name="_ValidationScriptsPartial"/>
+    
+    <!-- Include stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    
+    <script>
+      const quill = new Quill('#quill-editor', {
+        theme: 'snow'
+      });
+      const textAreaDesc = document.querySelector('textarea[name="Product.Description"]');   
+      
+      if (textAreaDesc.value) {
+          quill.root.innerHTML = textAreaDesc.value;
+      }
+      
+      quill.on("text-change",()=>textAreaDesc.value=quill.root.innerHTML);
+    </script>
 }
