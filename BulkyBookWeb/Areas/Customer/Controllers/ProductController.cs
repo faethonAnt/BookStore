@@ -27,9 +27,10 @@ public class ProductController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> Upsert()
+    public async Task<IActionResult> Upsert(int? id)
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
+        
         ProductVM productVM = new()
         {
             CategoryList = categories.Select(c=> new SelectListItem
@@ -39,7 +40,16 @@ public class ProductController : Controller
             }),
             Product = new Product()
         };
-        return View(productVM);
+        if (id == null || id == 0)
+        {
+            return View(productVM);
+        }
+        else
+        {
+            productVM.Product = await _productService.GetProductByIdAsync(id.Value);
+            return View(productVM);
+        }
+
     }
 
     [HttpPost]
@@ -66,7 +76,7 @@ public class ProductController : Controller
                 {
                     file.CopyTo(fileStream);
                 }
-                productVM.Product.ImageUrl = Path.Combine(@"\",productPath, fileName).Replace("\\","/");
+                productVM.Product.ImageUrl = $"/images/products/{fileName}";
             }
             
             await _productService.CreateProductAsync(productVM.Product);
