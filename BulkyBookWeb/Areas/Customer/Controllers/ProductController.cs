@@ -120,17 +120,7 @@ public class ProductController : Controller
         }
         return View(product);
     }
-
-    [HttpPost]
-    [ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeletePOST(int id)
-    {
-        await _productService.DeleteProductAsync(id);
-        TempData["Success"] = "Product deleted successfully";
-        return RedirectToAction("Index");
-        
-    }
+    
     
     #region API CALLS
 
@@ -139,6 +129,32 @@ public class ProductController : Controller
     {
         var products = await _productService.GetAllProductsAsync(true);// EF alternative to SELECT
         return Json(new {data = products});
+    }
+    
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        if (id == null || id == 0)
+        {
+            return Json(new { success = false, message = "Invalid ID" });
+        }
+        
+        var productToBeDeleted = await _productService.GetProductByIdAsync(id);
+        if (productToBeDeleted == null)
+        {
+            return Json(new { success = false, message = "Product not found" });
+        }
+
+        if (!string.IsNullOrEmpty(productToBeDeleted.ImageUrl))
+        {
+            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath,productToBeDeleted.ImageUrl.Trim('/'));
+            if (System.IO.File.Exists(imagePath))
+            {
+                System.IO.File.Delete(imagePath);
+            }
+        }
+        await _productService.DeleteProductAsync(id);
+        return Json(new { success = true, message = "Product deleted successfully" });
     }
 
     #endregion
